@@ -1,3 +1,10 @@
+"""
+
+Run Script from project root dir:
+  python -m app.intro.c_control_flow
+
+"""
+
 import json
 from ..utils import utils
 from dsp3.models.manager import Manager

@@ -1,6 +1,15 @@
+"""
+
+Run Script from project root dir:
+  python -m app.intro.e_classes
+
+"""
+
+
 import json
 from dsp3.models.manager import Manager
 from ..utils import utils
+from .person import Person
 
 username, password, tenant = utils.parse_dsas_crendentials()
 dsm = Manager(username=username, password=password, tenant=tenant)
@@ -12,16 +21,6 @@ if len(hosts) > 0:
     print(json.dumps(host_model.__dict__))
 
 
-class Person:
-    def __init__(self, first_name, last_name):
-        self.first_name = first_name
-        self.last_name = last_name
-
-    def full_name(self):
-        return self.first_name + " " + self.last_name
-
-    def __str__(self):
-        return 'I am an object of type {} found at memory address {}'.format(type(self), id(self))
 
 
 jen = Person('Jen', 'Smith')

@@ -1,3 +1,11 @@
+"""
+
+Run Script from project root dir:
+  python -m app.intro.d_functions
+
+"""
+
+
 from dsp3.models.manager import Manager
 from ..utils import utils
 
