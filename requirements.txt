@@ -1,0 +1,7 @@
+ipython
+requests
+suds-py3
+pyyaml
+
+--extra-index-url https://testpypi.python.org/pypi
+dsp3
