@@ -1,0 +1,71 @@
+- name: Initializing Kristophs's Donuts and Burgers Secure Development Pipeline
+  hosts: prod_server
+  gather_facts: False
+  vars:
+    github_user: jeffthorne
+    github_repo: jeffthorne/kristofs_donuts.git
+    dsas_tenant: ACME Corp
+    dsas_user: username
+    destination_dir: /home/ubuntu/
+    app_control_duration: 500
+    stall: 30
+    host_id: 6201
+
+
+  vars_prompt:
+      - name: "github_password"
+        prompt: "Enter your github password"
+        private: yes
+      - name: "dsas_password"
+        prompt: "Enter your DSaS password"
+        private: yes
+
+  tasks:
+
+     - name: Opening code push maintenance window
+       delegate_to: localhost
+       action: dsp3_app_control_on ds_tenant={{ dsas_tenant }} ds_user={{ dsas_user }} ds_password={{ dsas_password }} duration={{ app_control_duration }} stall={{ stall }} host_id={{ host_id }}
+       register: result
+
+
+     - name: remove existing src directory
+       become: True
+       become_user: root
+       file:
+         state: absent
+         path: "{{ destination_dir }}/kristofs_donuts"
+
+     - name: check out github repo
+       git: repo=https://{{ github_user }}:{{ github_password }}@github.com/{{ github_repo}} dest={{ destination_dir }}/kristofs_donuts
+
+     - name: Change into src dir
+       command: chdir={{ destination_dir }}/kristofs_donuts ls
+
+     - name: Shutting down containers
+       become: True
+       service:
+         name: docker
+         state: stopped
+
+     - name: Initializing Docker Engine
+       become: True
+       service:
+         name: docker
+         state: started
+
+     - name: Build container
+       become: True
+       command: chdir={{ destination_dir }}/kristofs_donuts docker build -t kristophs:latest .
+
+     - name: Run container
+       become: True
+       command: chdir={{ destination_dir }}  docker run --dns=8.8.8.8 -d -p 8080:5001 kristophs
+
+     - name: Closing code push maintenance window
+       delegate_to: localhost
+       action: dsp3_app_control_off ds_tenant={{ dsas_tenant }} ds_user={{ dsas_user }} ds_password={{ dsas_password }} host_id={{ host_id }}
+       register: result
+
+     - debug:
+         var: result
+         verbosity: 2

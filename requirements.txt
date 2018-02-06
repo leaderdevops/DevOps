@@ -2,6 +2,7 @@ ipython
 requests
 suds-py3
 pyyaml
+ansible
 
 --extra-index-url https://testpypi.python.org/pypi
 dsp3

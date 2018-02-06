@@ -1,4 +1,5 @@
-# Lesson 1 Variables  USE iPython Interactve
+import requests
+import json
 from dsp3.models.manager import Manager  #import statement needed for 3rd party packages
 from ..utils import utils
 from .person import Person
@@ -17,8 +18,15 @@ username, password, tenant = utils.parse_dsas_crendentials()
 
 type(tenant)
 
-
 dsm = Manager(username=username, password=password, tenant=tenant)
+
+# vs
+
+headers = {'Content-Type': 'application/json'}
+auth_info = dict(dsCredentials=dict(userName=username, password=password, tenantName=tenant))
+auth_info_json = json.dumps(auth_info)
+response = requests.post(url='https://app.deepsecurity.trendmicro.com/rest/authentication/login', data=auth_info_json, headers=headers, verify=False)
+print(response.content)
 
 type(dsm)
 
